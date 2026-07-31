@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camelia & Emilian - 31.07.2027</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Pinyon+Script&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --burgundy: #42000E;
+            --gold: #C59B27;
+            --cream: #FCFAF6;
+            --gold-gradient: linear-gradient(135deg, #A17410 0%, #E8C35E 50%, #8C620C 100%);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body { 
+            font-family: 'Cormorant Garamond', serif; 
+            background-color: var(--cream); 
+            color: var(--burgundy); 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- PLIC REPREZENTAT 3D DIN COD (FĂRĂ IMAGINI EXTERNE) --- */
+        #envelope-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #F2EFE9;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 1s ease;
+            perspective: 1200px;
+        }
+
+        .envelope {
+            width: 90%;
+            max-width: 420px;
+            height: 320px;
+            background: #36000a; /* Catifea Burgundy Închis */
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            transform-style: preserve-3d;
+        }
+
+        /* Corpul plicului (buzunarul de jos) */
+        .envelope-body {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            background: var(--burgundy);
+            border-radius: 0 0 4px 4px;
+            clip-path: polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, 50% 60%);
+            z-index: 2;
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Clapeta superioară care se va deschide */
+        .flap {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 0;
+            border-left: 210px solid transparent;
+            border-right: 210px solid transparent;
+            border-top: 190px solid #520011; /* Nuanță ușor diferită pentru umbră */
+            transform-origin: top center;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+            filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3));
+        }
+
+        @media(max-width: 430px) {
+            .envelope { height: 280px; }
+            .flap { 
+                border-left-width: 50vw; 
+                border-right-width: 50vw; 
+                border-top-width: 170px; 
+            }
+        }
+
+        /* Sigiliul de Ceară Auriu */
+        .seal {
+            position: absolute;
+            top: 175px; left: 50%;
+            width: 85px; height: 85px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 4;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--burgundy);
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4), inset 0 0 10px rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.25);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+        }
+
+        .seal::before {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid rgba(66, 0, 14, 0.15);
+            border-radius: 50%;
+        }
+
+        .seal:hover { 
+            transform: translate(-50%, -50%) scale(1.08); 
+        }
+
+        .seal span { 
+            font-size: 1.15rem; 
+            pointer-events: none; 
+            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+        }
+
+        /* Stări Animație Plic */
+        .envelope.open .flap { 
+            transform: rotateX(180deg); 
+            z-index: 1;
+        }
+        .envelope.open .seal { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0); 
+            pointer-events: none;
+        }
+
+        /* --- DESIGN INTERIOR INVITAȚIE --- */
+        .main-content {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 60px 25px;
+            position: relative;
+            background: var(--cream);
+            box-shadow: 0 0 60px rgba(66,0,14,0.06);
+            min-height: 100vh;
+        }
+
+        /* --- ARIPI DE ÎNGER ELEMENT DE FUNDAL --- */
+        .angel-wings-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            /* Folosește un SVG vectorizat curat pentru aripile de înger */
+            background-image: url('https://www.transparentpng.com/download/angel-wings/angel-wings-transparent-image-11.png');
+            background-size: 75%;
+            background-position: center 35%;
+            background-repeat: no-repeat;
+            opacity: 0.035;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatingWings 7s ease-in-out infinite;
+        }
+
+        @keyframes floatingWings {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.02); }
+        }
+
+        /* --- ANIMAȚIE DE APARIȚIE TEXT (IMERSIVĂ) --- */
+        .section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            margin-bottom: 90px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section.appear { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+
+        /* --- TIPOGRAFIE UNITARĂ --- */
+        .handwritten {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 3.2rem;
+            color: var(--gold);
+            line-height: 1.2;
+        }
+
+        .names {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            letter-spacing: 4px;
+            margin: 25px 0;
+            color: var(--burgundy);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* Corecție secțiune Citat Iubirea */
+        .quote-box {
+            padding: 50px 20px;
+            border-top: 1px solid rgba(197, 155, 39, 0.25);
+            border-bottom: 1px solid rgba(197, 155, 39, 0.25);
+            margin: 50px 0;
+        }
+        .quote-box .handwritten { 
+            font-size: 3.6rem; 
+            display: block; 
+            margin-bottom: 15px;
+        }
+        .quote-text {
+            font-size: 1.35rem; 
+            font-style: italic;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Stil Uniform pentru Secțiunea de Nume (Părinți & Nași) */
+        .family-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-family: 'Cinzel', serif;
+        }
+
+        .family-names { 
+            font-size: 1.35rem; 
+            margin-bottom: 45px; 
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--burgundy);
+        }
+
+        /* --- POVESTEA ZILEI (TIMELINE) --- */
+        .timeline-container {
+            margin-top: 40px;
+            padding: 0 10px;
+        }
+        .timeline-item {
+            margin-bottom: 45px;
+            padding-left: 25px;
+            border-left: 1px solid rgba(197, 155, 39, 0.4);
+            text-align: left;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -5px; top: 5px;
+            width: 9px; height: 9px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--cream);
+        }
+        .time { 
+            font-family: 'Cinzel', serif;
+            font-weight: 600; 
+            color: var(--gold); 
+            font-size: 1.05rem; 
+            display: block;
+            margin-bottom: 4px;
+        }
+        .timeline-item h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+        .timeline-item p {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            font-weight: 300;
+        }
+        .location-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: var(--gold);
+            text-decoration: underline;
+            font-style: italic;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .location-link:hover {
+            color: var(--burgundy);
+        }
+
+        /* --- RSVP MODIFICAT (CÂMP COMPLETABIL LIBER) --- */
+        .rsvp-form { 
+            text-align: left; 
+            background: rgba(255, 255, 255, 0.4); 
+            padding: 35px 25px; 
+            border: 1px solid rgba(197, 155, 39, 0.15); 
+            border-radius: 2px;
+            box-shadow: 0 10px 30px rgba(66,0,14,0.02);
+        }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--burgundy);
+        }
+        .form-group input { 
+            width: 100%; 
+            padding: 12px 4px; 
+            border: none; 
+            border-bottom: 1px solid rgba(197, 155, 39, 0.4); 
+            background: transparent; 
+            outline: none; 
+            font-family: inherit; 
+            font-size: 1.05rem;
+            color: var(--burgundy);
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-bottom-color: var(--burgundy);
+        }
+        .btn-submit {
+            width: 100%; 
+            background: var(--burgundy); 
+            color: var(--cream); 
+            padding: 16px;
+            border: 1px solid var(--gold); 
+            font-family: 'Cinzel', serif; 
+            font-size: 0.95rem;
+            letter-spacing: 2px; 
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .btn-submit:hover {
+            background: var(--cream);
+            color: var(--burgundy);
+        }
+
+        /* Buton Audio plutitor */
+        #music-btn {
+            position: fixed; bottom: 25px; right: 25px;
+            background: var(--burgundy); color: var(--gold);
+            width: 46px; height: 46px; border-radius: 50%;
+            display: none; justify-content: center; align-items: center;
+            z-index: 1001; cursor: pointer; border: 1px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            transition: transform 0.3s;
+        }
+        #music-btn:active { transform: scale(0.9); }
+
+        /* Countdown */
+        .countdown {
+            display: flex; justify-content: center; gap: 25px; margin-top: 35px;
+        }
+        .count-item { min-width: 65px; }
+        .count-item span { display: block; font-size: 2.4rem; font-weight: 300; color: var(--burgundy); font-family: 'Cormorant Garamond', serif; }
+        .count-item label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="muzica.mp3" loop></audio>
+    <button id="music-btn" onclick="toggleMusic()"><i class="fa-solid fa-music"></i></button>
+
+    <div id="envelope-overlay">
+        <div class="envelope" id="env">
+            <div class="flap"></div>
+            <div class="envelope-body"></div>
+            <div class="seal" onclick="startExperience()">
+                <span>C & E</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="angel-wings-bg"></div>
+
+    <div class="main-content">
+        
+        <div class="section" id="s1">
+            <p style="letter-spacing: 6px; font-weight: 400; font-size: 0.85rem; color: var(--gold);">SAVE THE DATE</p>
+            <div class="names">CAMELIA <br> & <br> EMILIAN</div>
+            <p class="handwritten" style="font-size: 3.5rem;">31 Iulie 2027</p>
+        </div>
+
+        <div class="section quote-box">
+            <span class="handwritten">Iubirea...</span>
+            <p class="quote-text">
+                „Iubirea este cea care mișcă soarele și celelalte stele.”
+            </p>
+            <p style="margin-top: 15px; font-size: 0.8rem; letter-spacing: 3px; font-family: 'Cinzel', serif; color: var(--gold);">DANTE ALIGHIERI</p>
+        </div>
+
+        <div class="section">
+            <p class="family-title">Cu binecuvântarea părinților:</p>
+            <div class="family-names">
+                Simona & Sebastian Balint <br>
+                Irina & Vistrian Rotaru
+            </div>
+
+            <p class="family-title">Călăuziți de nașii noștri:</p>
+            <div class="family-names" style="margin-bottom: 20px;">
+                Mădălina & Cosmin Bratu
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 style="font-family: 'Cinzel', serif; margin-bottom: 40px; letter-spacing: 3px; font-weight: 400;">Povestea Zilei</h2>
+            
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <span class="time">14:00</span>
+                    <h3>Cununia Civilă</h3>
+                    <p>Momentul oficial în care vom semna primul capitol din viitorul nostru.</p>
+                    <a class="location-link" href="https://maps.google.com/?q=Starea+Civila+Bacau" target="_blank"><i class="fa-solid fa-location-dot"></i> Vezi locația pe hartă</a>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="time">16:00</span>
+                    <h3>Cununia Religioasă</h3>
+                    <p>Taina sfântă în care dragostea noastră primește binecuvântarea divină.</p>
+                    <a class="location-link" href="https://maps.google.com/?q=Biserica+Bacau" target="_blank"><i class="fa-solid fa-location-dot"></i> Vezi locația pe hartă</a>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="time">19:00</span>
+                    <h3>Marea Petrecere</h3>
+                    <p>Sărbătorim, ciocnim paharele și scriem amintiri până în zori!</p>
+                    <a class="location-link" href="https://maps.google.com/?q=Cort+Levisticum+Bacau" target="_blank"><i class="fa-solid fa-location-dot"></i> Cort Levisticum, Bacău</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 style="font-family: 'Cinzel', serif; margin-bottom: 15px; font-weight: 400; letter-spacing: 2px;">Confirmare</h2>
+            <p style="margin-bottom: 35px; font-size: 1.15rem; font-style: italic;">Vă rugăm să ne confirmați prezența până la data de 01.06.2027</p>
+            
+            <form class="rsvp-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label>Nume și Prenume</label>
+                    <input type="text" placeholder="Ex: Popescu Maria și Ionuț">
+                </div>
+                <div class="form-group">
+                    <label>Preferințe meniu / Alergii sau mențiuni speciale</label>
+                    <input type="text" placeholder="Ex: 1 Tradițional, 1 Vegetarian / Fără nuci...">
+                </div>
+                <div class="form-group">
+                    <label>Număr de locuri rezervate</label>
+                    <input type="number" min="1" value="2">
+                </div>
+                <button class="btn-submit">TRIMITE CONFIRMARE</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <p style="letter-spacing: 4px; font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold);">PÂNĂ LA EVENIMENT AU MAI RĂMAS:</p>
+            <div class="countdown" id="timer">
+                <div class="count-item"><span id="zile">00</span><label>Zile</label></div>
+                <div class="count-item"><span id="ore">00</span><label>Ore</label></div>
+                <div class="count-item"><span id="min">00</span><label>Min</label></div>
+            </div>
+            <p style="margin-top: 70px; font-family: 'Pinyon Script', cursive; font-size: 3.2rem; color: var(--gold);">Vă așteptăm cu drag!</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Deschiderea plicului și inițierea experienței imersive
+        function startExperience() {
+            const env = document.getElementById('env');
+            const overlay = document.getElementById('envelope-overlay');
+            const music = document.getElementById('bgMusic');
+
+            env.classList.add('open');
+            
+            // Muzica este configurată să ruleze din secunda 9
+            music.currentTime = 9;
+            music.play().catch(e => console.log("Pornirea audio a fost blocată de browser până la interacțiune."));
+
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.getElementById('music-btn').style.display = 'flex';
+                    // Declanșează verificarea vizuală pentru prima secțiune imediat după deschidere
+                    reveal();
+                }, 1000);
+            }, 1300);
+        }
+
+        // Pornit/Oprit Muzică din butonul plutitor
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            if (music.paused) music.play();
+            else music.pause();
+        }
+
+        // Sistem imersiv de dezvăluire a textului la scroll
+        function reveal() {
+            var sections = document.querySelectorAll(".section");
+            for (var i = 0; i < sections.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = sections[i].getBoundingClientRect().top;
+                var elementVisible = 120; // Textul apare când elementul este la 120px de marginea de jos
+                if (elementTop < windowHeight - elementVisible) {
+                    sections[i].classList.add("appear");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+
+        // Dynamic Countdown Logic
+        const targetDate = new Date("July 31, 2027 14:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            
+            if(diff > 0) {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById('zile').innerText = d < 10 ? "0" + d : d;
+                document.getElementById('ore').innerText = h < 10 ? "0" + h : h;
+                document.getElementById('min').innerText = m < 10 ? "0" + m : m;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

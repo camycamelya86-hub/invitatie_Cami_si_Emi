@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Nunta Cami si Emi//Calendar Event//RO
+BEGIN:VEVENT
+UID:nuntacamiemilian2027@invitatiedigitala
+DTSTAMP:20260609T000000Z
+DTSTART:20270731T093000
+DTEND:20270801T060000
+SUMMARY:Nunta Camelia & Emilian
+DESCRIPTION:Va asteptam cu drag! 09:30 Gatitul Mirelui (Lilieci)\, 10:30 Gatitul Miresei (Levisticum)\, 12:30 Traditii (Levisticum)\, 15:15 Cununia Civila (Levisticum)\, 16:30 Cununia Religioasa (Biserica Sf. Dumitru)\, 20:00 Marea Petrecere (Cort Levisticum).
+LOCATION:Cort Levisticum\, Bacau\, Romania
+END:VEVENT
+END:VCALENDAR
